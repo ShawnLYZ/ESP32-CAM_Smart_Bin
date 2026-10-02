@@ -1,0 +1,59 @@
+#pragma once
+
+// ═══ Deployment constants — edit these before flashing ═══════════════
+
+// WiFi
+#define WIFI_SSID              "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD          "YOUR_WIFI_PASSWORD"
+
+// Gemini (API key from Google AI Studio)
+// gemini-2.5-flash was retired for new keys (HTTP 404 "no longer available
+// to new users"); gemini-3.5-flash is the current stable flash model and
+// accepts the same generationConfig (responseSchema + thinkingBudget 0).
+#define GEMINI_API_KEY         "YOUR_GEMINI_API_KEY"
+#define GEMINI_MODEL           "gemini-3.5-flash"
+
+// ═══ Behavior constants ══════════════════════════════════════════════
+
+// Sanity clamps applied to Gemini's estimates before they are displayed.
+#define CLAMP_WEIGHT_MIN_KG    0.005f
+#define CLAMP_WEIGHT_MAX_KG    3.0f
+#define CLAMP_CO2_MIN_KG       0.0f
+#define CLAMP_CO2_MAX_KG       10.0f
+
+// Ultrasonic HC-SR04 (TRIG driven at 3.3 V; ECHO through 1k/2k divider)
+// Tuning rule: CLEAR_DISTANCE_CM must sit a few cm BELOW the empty-chamber
+// reading (see `last=` in the [ULTRA] log) or the bin can never re-arm.
+// TRIGGER_DISTANCE_CM must sit a few cm below CLEAR_DISTANCE_CM (hysteresis).
+#define ULTRA_TRIG_PIN         13
+#define ULTRA_ECHO_PIN         2
+#define TRIGGER_DISTANCE_CM    15.0f
+#define CLEAR_DISTANCE_CM      18.0f   // hysteresis before re-arm
+#define DETECT_CONSECUTIVE     3       // reads <= trigger to accept a deposit
+#define CLEAR_CONSECUTIVE      5       // reads >= clear to re-arm
+#define DISTANCE_POLL_MS       100UL
+#define SETTLE_DELAY_MS        800UL   // wait after detection before capture
+
+// Servo
+#define SERVO_PIN              12
+#define SERVO_HOME_ANGLE       90
+#define SERVO_RECYCLABLE_ANGLE 180
+#define SERVO_RESIDUAL_ANGLE   0
+#define SERVO_HOLD_MS          2000UL
+#define SERVO_RETURN_MS        500UL   // time allowed for the flap to travel back to home
+
+// OLED SSD1306 128x64
+#define OLED_SDA_PIN           14
+#define OLED_SCL_PIN           15
+#define OLED_ADDR              0x3C
+
+// Screens & networking
+#define RESULT_SCREEN_MS       6000UL   // how long the sorted item stays on the OLED
+#define ERROR_SCREEN_MS        2500UL
+#define HTTP_TIMEOUT_MS        30000UL  // gemini-3.5-flash measured ~12 s per reply
+#define WIFI_RETRY_MS          20000UL
+#define WIFI_CONNECT_TIMEOUT_MS 10000UL
+
+// ═══ Diagnostics (serial only — set both to 0 for deployment) ════════
+#define DEBUG_ULTRA_LOG        1   // 1 Hz summary of HC-SR04 reads + arming state
+#define DEBUG_VISION_LOG       1   // dump captured JPEG as base64 + raw Gemini reply
